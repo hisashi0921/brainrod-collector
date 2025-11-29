@@ -146,7 +146,7 @@
             font-size: 20px;
         }
 
-        #craft-button, #recipe-button, #save-button, #load-button, #reset-button {
+        #craft-button, #recipe-button, #save-button, #load-button, #reset-button, #time-button {
             position: absolute;
             top: 20px;
             background: rgba(139, 69, 19, 0.9);
@@ -180,12 +180,21 @@
             background: rgba(139, 0, 0, 0.9);
         }
 
-        #craft-button:hover, #recipe-button:hover, #save-button:hover, #load-button:hover, #reset-button:hover {
+        #time-button {
+            right: 600px;
+            background: rgba(30, 30, 80, 0.9);
+        }
+
+        #craft-button:hover, #recipe-button:hover, #save-button:hover, #load-button:hover, #reset-button:hover, #time-button:hover {
             background: rgba(139, 69, 19, 1);
         }
 
         #reset-button:hover {
             background: rgba(139, 0, 0, 1);
+        }
+
+        #time-button:hover {
+            background: rgba(50, 50, 120, 1);
         }
 
         #crafting-menu, #recipe-menu {
@@ -417,6 +426,7 @@
             <div>敵の数: <span id="enemy-count">0</span></div>
         </div>
 
+        <button id="time-button">🌙 夜にする</button>
         <button id="reset-button">🔄 リセット</button>
         <button id="load-button">📂 ロード</button>
         <button id="save-button">💾 セーブ</button>

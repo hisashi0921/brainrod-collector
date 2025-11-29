@@ -405,6 +405,51 @@ class EnemyManager {
         return hitCount;
     }
 
+    // レイキャストで敵を検出して攻撃
+    attackEnemyWithRaycast(raycaster, damage, maxRange = 5) {
+        // 全敵のメッシュを収集
+        const enemyMeshes = [];
+        this.enemies.forEach(enemy => {
+            if (enemy.health > 0) {
+                enemyMeshes.push(enemy.bodyMesh);
+                enemyMeshes.push(enemy.headMesh);
+            }
+        });
+
+        // レイキャストで交差判定
+        const intersects = raycaster.intersectObjects(enemyMeshes);
+
+        if (intersects.length > 0) {
+            const hit = intersects[0];
+
+            // 範囲内かチェック
+            if (hit.distance <= maxRange) {
+                // ヒットしたメッシュから敵を特定
+                const hitMesh = hit.object;
+                for (const enemy of this.enemies) {
+                    if (enemy.bodyMesh === hitMesh || enemy.headMesh === hitMesh) {
+                        enemy.takeDamage(damage);
+                        return { hit: true, enemy: enemy, distance: hit.distance };
+                    }
+                }
+            }
+        }
+
+        return { hit: false };
+    }
+
+    // 全敵のメッシュを取得（レイキャスト用）
+    getAllEnemyMeshes() {
+        const meshes = [];
+        this.enemies.forEach(enemy => {
+            if (enemy.health > 0) {
+                meshes.push(enemy.bodyMesh);
+                meshes.push(enemy.headMesh);
+            }
+        });
+        return meshes;
+    }
+
     clear() {
         this.enemies.forEach(enemy => enemy.remove());
         this.enemies = [];

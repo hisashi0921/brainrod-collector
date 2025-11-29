@@ -52,6 +52,11 @@ class Game {
         this.mouseDown = false;
         this.rightMouseDown = false;
 
+        // 攻撃用レイキャスター
+        this.attackRaycaster = new THREE.Raycaster();
+        this.attackCooldown = 0;
+        this.attackCooldownTime = 0.5; // 攻撃クールダウン（秒）
+
         this.setupControls();
         this.init();
     }
@@ -157,12 +162,17 @@ class Game {
     }
 
     setupControls() {
-        // マウスクリック（ブロック破壊）
+        // マウスクリック（ブロック破壊 / 敵攻撃）
         document.addEventListener('mousedown', (e) => {
             if (this.uiManager.isAnyMenuOpen()) return;
 
             if (e.button === 0) { // 左クリック
-                this.mouseDown = true;
+                // まず敵への攻撃を試みる
+                const attacked = this.tryAttackEnemy();
+                if (!attacked) {
+                    // 敵にヒットしなければブロック破壊モード
+                    this.mouseDown = true;
+                }
             } else if (e.button === 2) { // 右クリック
                 this.rightMouseDown = true;
                 this.placeBlock();
@@ -224,6 +234,17 @@ class Game {
             });
         }
 
+        // モバイル用：攻撃ボタン
+        const mobileAttackBtn = document.getElementById('mobile-attack');
+        if (mobileAttackBtn) {
+            mobileAttackBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (!this.uiManager.isAnyMenuOpen()) {
+                    this.tryAttackEnemy();
+                }
+            });
+        }
+
         // セーブボタン
         const saveBtn = document.getElementById('save-button');
         if (saveBtn) {
@@ -255,6 +276,35 @@ class Game {
                 }
             });
         }
+
+        // 時間切り替えボタン
+        const timeBtn = document.getElementById('time-button');
+        if (timeBtn) {
+            timeBtn.addEventListener('click', () => {
+                this.toggleDayNight();
+            });
+            // タッチ対応
+            timeBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.toggleDayNight();
+            });
+        }
+    }
+
+    // 昼夜切り替え
+    toggleDayNight() {
+        const timeBtn = document.getElementById('time-button');
+        if (this.dayNightCycle.isNight()) {
+            // 夜→昼
+            this.dayNightCycle.setToNoon();
+            if (timeBtn) timeBtn.textContent = '🌙 夜にする';
+            console.log('☀️ 昼になりました');
+        } else {
+            // 昼→夜
+            this.dayNightCycle.setToMidnight();
+            if (timeBtn) timeBtn.textContent = '☀️ 昼にする';
+            console.log('🌙 夜になりました');
+        }
     }
 
     placeBlock() {
@@ -273,12 +323,11 @@ class Game {
         }
     }
 
-    attackEnemies() {
+    // 武器ダメージを取得
+    getWeaponDamage() {
         const selectedItem = window.inventory.getSelectedItem();
         let damage = 1; // 素手ダメージ
-        let range = 3;
 
-        // 武器のダメージ
         if (selectedItem.type !== ItemType.AIR) {
             switch (selectedItem.type) {
                 case ItemType.WOODEN_SWORD:
@@ -298,6 +347,32 @@ class Game {
                     break;
             }
         }
+        return damage;
+    }
+
+    // クリック/タップで敵を攻撃
+    tryAttackEnemy() {
+        // クールダウン中は攻撃不可
+        if (this.attackCooldown > 0) return false;
+
+        // カメラの向きでレイキャスト
+        this.attackRaycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera);
+
+        const damage = this.getWeaponDamage();
+        const result = this.enemyManager.attackEnemyWithRaycast(this.attackRaycaster, damage, 5);
+
+        if (result.hit) {
+            this.attackCooldown = this.attackCooldownTime;
+            console.log(`敵にヒット！ダメージ: ${damage}`);
+            return true;
+        }
+
+        return false;
+    }
+
+    attackEnemies() {
+        const damage = this.getWeaponDamage();
+        const range = 3;
 
         // 攻撃範囲内の敵にダメージ
         const hitCount = this.enemyManager.attackEnemies(this.player.position, range, damage);
@@ -308,6 +383,11 @@ class Game {
     }
 
     update(deltaTime) {
+        // 攻撃クールダウン更新
+        if (this.attackCooldown > 0) {
+            this.attackCooldown -= deltaTime;
+        }
+
         // プレイヤー更新
         this.player.update(deltaTime);
 
