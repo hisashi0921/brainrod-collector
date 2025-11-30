@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ブレインロッド コレクター</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .money-display {
+            background: linear-gradient(135deg, #2d2d44 0%, #1f1f35 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 2px solid #3d3d5c;
+        }
+
+        .money-label {
+            font-size: 1.2em;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .money-amount {
+            font-size: 3em;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .income-rate {
+            margin-top: 15px;
+            font-size: 1.1em;
+            color: #4ecdc4;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3d3d5c;
+            color: #00d4ff;
+        }
+
+        .rods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .rod-card {
+            background: linear-gradient(135deg, #2d2d44 0%, #1f1f35 100%);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 2px solid #3d3d5c;
+            cursor: pointer;
+        }
+
+        .rod-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .rod-card.cannot-afford {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .rod-card.cannot-afford:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #3d3d5c;
+        }
+
+        .rod-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .rod-price {
+            font-size: 1.1em;
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+
+        .rod-income {
+            font-size: 0.95em;
+            color: #4ecdc4;
+            margin-bottom: 8px;
+        }
+
+        .rod-owned {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .owned-section {
+            margin-top: 40px;
+        }
+
+        .owned-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .owned-card {
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .owned-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .owned-count {
+            color: #00d4ff;
+            font-size: 1.2em;
+        }
+
+        .owned-total-income {
+            color: #4ecdc4;
+            font-size: 0.9em;
+        }
+
+        .tier-indicator {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(123, 44, 191, 0.2);
+            border-radius: 10px;
+            color: #b388ff;
+        }
+
+        /* レアロッドのスタイル */
+        .rod-card.rare {
+            background: linear-gradient(135deg, #4a3728 0%, #2d1f14 100%);
+            border: 2px solid #ffd700;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rod-card.rare::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 215, 0, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .rod-card.rare:hover {
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+            border-color: #ffec8b;
+        }
+
+        .rod-card.rare .rod-name {
+            color: #ffd700;
+        }
+
+        .rare-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .rod-card.rare .rod-income {
+            color: #ffd700;
+        }
+
+        .owned-card.rare {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+        }
+
+        .owned-card.rare .owned-name {
+            color: #ffd700;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .money-amount {
+            animation: pulse 2s infinite;
+        }
+
+        .purchase-effect {
+            animation: purchaseFlash 0.3s ease;
+        }
+
+        @keyframes purchaseFlash {
+            0% { background-color: rgba(0, 212, 255, 0.5); }
+            100% { background-color: transparent; }
+        }
+
+        /* セーブ関連のスタイル */
+        .save-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .save-status {
+            font-size: 0.9em;
+            color: #4ecdc4;
+            padding: 8px 15px;
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 8px;
+        }
+
+        .save-btn, .reset-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: #fff;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+            color: #fff;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .save-flash {
+            animation: saveFlash 0.5s ease;
+        }
+
+        @keyframes saveFlash {
+            0%, 100% { background: rgba(78, 205, 196, 0.1); }
+            50% { background: rgba(78, 205, 196, 0.4); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ブレインロッド コレクター</h1>
+            <p>ブレインロッドを集めてお金を稼ごう！</p>
+        </header>
+
+        <div class="money-display">
+            <div class="money-label">所持金</div>
+            <div class="money-amount" id="money">100 円</div>
+            <div class="income-rate" id="income-rate">収入: 0 円/秒</div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-label">所持ブレインロッド数</div>
+                <div class="stat-value" id="total-rods">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">総収益</div>
+                <div class="stat-value" id="total-earned">0 円</div>
+            </div>
+        </div>
+
+        <div class="save-controls">
+            <div class="save-status" id="save-status">自動保存: 準備中...</div>
+            <button class="save-btn" id="save-btn">手動セーブ</button>
+            <button class="reset-btn" id="reset-btn">リセット</button>
+        </div>
+
+        <div class="tier-indicator" id="tier-indicator">
+            現在の価格帯: 100円台
+        </div>
+
+        <h2 class="section-title">購入可能なブレインロッド</h2>
+        <div class="rods-grid" id="rods-shop">
+            <!-- ブレインロッドがここに動的に追加される -->
+        </div>
+
+        <div class="owned-section">
+            <h2 class="section-title">所持中のブレインロッド</h2>
+            <div class="owned-grid" id="owned-rods">
+                <!-- 所持中のブレインロッドがここに表示される -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ゲーム状態
+        const gameState = {
+            money: 100,
+            totalEarned: 0,
+            ownedRods: {}, // { rodId: count } 通常ロッド
+            ownedRareRods: {}, // { rodId: count } レアロッド
+            incomePerSecond: 0
+        };
+
+        // 現在ショップに表示されているレアロッドの状態
+        const shopRareState = {}; // { rodId: true/false }
+        const RARE_CHANCE = 0.2; // 20%の確率でレア
+        const RARE_MULTIPLIER = 1.5; // レアは1.5倍の収入
+        const SAVE_KEY = 'brainrod_save_data'; // ローカルストレージのキー
+
+        // セーブ機能
+        function saveGame() {
+            const saveData = {
+                money: gameState.money,
+                totalEarned: gameState.totalEarned,
+                ownedRods: gameState.ownedRods,
+                ownedRareRods: gameState.ownedRareRods,
+                savedAt: Date.now()
+            };
+            localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+
+            // セーブ表示を更新
+            const statusEl = document.getElementById('save-status');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('ja-JP');
+            statusEl.textContent = `自動保存: ${timeStr}`;
+            statusEl.classList.remove('save-flash');
+            void statusEl.offsetWidth; // リフロー強制
+            statusEl.classList.add('save-flash');
+        }
+
+        // ロード機能
+        function loadGame() {
+            const savedJson = localStorage.getItem(SAVE_KEY);
+            if (!savedJson) {
+                return false; // セーブデータなし
+            }
+
+            try {
+                const saveData = JSON.parse(savedJson);
+                gameState.money = saveData.money || 100;
+                gameState.totalEarned = saveData.totalEarned || 0;
+                gameState.ownedRods = saveData.ownedRods || {};
+                gameState.ownedRareRods = saveData.ownedRareRods || {};
+                gameState.incomePerSecond = calculateIncome();
+
+                // オフライン中の収益を計算（最大24時間分）
+                if (saveData.savedAt) {
+                    const offlineSeconds = Math.min(
+                        (Date.now() - saveData.savedAt) / 1000,
+                        24 * 60 * 60 // 最大24時間
+                    );
+                    const offlineEarnings = gameState.incomePerSecond * offlineSeconds;
+                    if (offlineEarnings > 0) {
+                        gameState.money += offlineEarnings;
+                        gameState.totalEarned += offlineEarnings;
+                        alert(`オフライン中に ${formatMoney(offlineEarnings)} 稼ぎました！`);
+                    }
+                }
+
+                return true;
+            } catch (e) {
+                console.error('セーブデータの読み込みに失敗:', e);
+                return false;
+            }
+        }
+
+        // リセット機能
+        function resetGame() {
+            if (confirm('本当にリセットしますか？\nすべてのデータが消えます。')) {
+                localStorage.removeItem(SAVE_KEY);
+                gameState.money = 100;
+                gameState.totalEarned = 0;
+                gameState.ownedRods = {};
+                gameState.ownedRareRods = {};
+                gameState.incomePerSecond = 0;
+
+                // shopRareStateもリセット
+                for (const key in shopRareState) {
+                    delete shopRareState[key];
+                }
+
+                updateDisplay();
+                updateShop();
+                updateOwnedRods();
+
+                document.getElementById('save-status').textContent = '自動保存: リセット完了';
+            }
+        }
+
+        // ブレインロッドの名前リスト（各桁で5種類）
+        const rodNames = [
+            ['ミニロッド', 'ベーシックロッド', 'スタンダードロッド', 'クオリティロッド', 'プレミアムロッド'],
+            ['シルバーロッド', 'ゴールドロッド', 'プラチナロッド', 'ダイヤロッド', 'クリスタルロッド'],
+            ['ファイアロッド', 'アクアロッド', 'サンダーロッド', 'ウィンドロッド', 'アースロッド'],
+            ['ドラゴンロッド', 'フェニックスロッド', 'ユニコーンロッド', 'グリフォンロッド', 'リヴァイアサンロッド'],
+            ['コズミックロッド', 'ギャラクシーロッド', 'ネビュラロッド', 'スターダストロッド', 'ユニバースロッド'],
+            ['タイムロッド', 'スペースロッド', 'ディメンションロッド', 'エターナルロッド', 'インフィニティロッド'],
+            ['神聖ロッド', '覇王ロッド', '天空ロッド', '深淵ロッド', '究極ロッド'],
+            ['伝説ロッド', '神話ロッド', '創世ロッド', '終焉ロッド', '超越ロッド']
+        ];
+
+        // 現在の桁を取得 (0: 百円台, 1: 千円台, 2: 万円台...)
+        function getCurrentTier() {
+            if (gameState.money < 100) return 0;
+            const digits = Math.floor(Math.log10(gameState.money));
+            return Math.max(0, digits - 2); // 100円(10^2)を基準
+        }
+
+        // 現在の桁に応じたブレインロッドを生成
+        function generateRodsForTier(tier) {
+            const rods = [];
+            const basePrice = Math.pow(10, tier + 2); // 100, 1000, 10000...
+            const names = rodNames[Math.min(tier, rodNames.length - 1)];
+
+            for (let i = 0; i < 5; i++) {
+                const rodId = `rod_${tier}_${i}`;
+                const price = basePrice * (i + 1);
+
+                // レア判定（まだ判定されていない場合のみ新しく判定）
+                if (shopRareState[rodId] === undefined) {
+                    shopRareState[rodId] = Math.random() < RARE_CHANCE;
+                }
+
+                const isRare = shopRareState[rodId];
+                const incomePerSec = (price / 100) * (isRare ? RARE_MULTIPLIER : 1);
+
+                rods.push({
+                    id: rodId,
+                    name: names[i],
+                    price: price,
+                    incomePerSec: incomePerSec,
+                    tier: tier,
+                    isRare: isRare
+                });
+            }
+            return rods;
+        }
+
+        // お金をフォーマット
+        function formatMoney(amount) {
+            if (amount >= 1e12) {
+                return (amount / 1e12).toFixed(2) + ' 兆円';
+            } else if (amount >= 1e8) {
+                return (amount / 1e8).toFixed(2) + ' 億円';
+            } else if (amount >= 1e4) {
+                return (amount / 1e4).toFixed(2) + ' 万円';
+            } else {
+                return Math.floor(amount) + ' 円';
+            }
+        }
+
+        // 桁の名前を取得
+        function getTierName(tier) {
+            const tierNames = ['百', '千', '万', '十万', '百万', '千万', '億', '十億', '百億', '千億', '兆'];
+            return tierNames[Math.min(tier, tierNames.length - 1)] + '円台';
+        }
+
+        // 収入を計算
+        function calculateIncome() {
+            let total = 0;
+            // 通常ロッドの収入
+            for (const [rodId, count] of Object.entries(gameState.ownedRods)) {
+                const parts = rodId.split('_');
+                const tier = parseInt(parts[1]);
+                const index = parseInt(parts[2]);
+                const basePrice = Math.pow(10, tier + 2);
+                const price = basePrice * (index + 1);
+                const incomePerSec = price / 100;
+                total += incomePerSec * count;
+            }
+            // レアロッドの収入（1.5倍）
+            for (const [rodId, count] of Object.entries(gameState.ownedRareRods)) {
+                const parts = rodId.split('_');
+                const tier = parseInt(parts[1]);
+                const index = parseInt(parts[2]);
+                const basePrice = Math.pow(10, tier + 2);
+                const price = basePrice * (index + 1);
+                const incomePerSec = (price / 100) * RARE_MULTIPLIER;
+                total += incomePerSec * count;
+            }
+            return total;
+        }
+
+        // ショップを更新
+        function updateShop() {
+            const shop = document.getElementById('rods-shop');
+            const tier = getCurrentTier();
+            const rods = generateRodsForTier(tier);
+
+            document.getElementById('tier-indicator').textContent =
+                `現在の価格帯: ${getTierName(tier)}`;
+
+            shop.innerHTML = '';
+
+            for (const rod of rods) {
+                const canAfford = gameState.money >= rod.price;
+                const ownedNormal = gameState.ownedRods[rod.id] || 0;
+                const ownedRare = gameState.ownedRareRods[rod.id] || 0;
+                const totalOwned = ownedNormal + ownedRare;
+
+                const card = document.createElement('div');
+                card.className = `rod-card ${rod.isRare ? 'rare' : ''} ${canAfford ? '' : 'cannot-afford'}`;
+
+                const rareBadge = rod.isRare ? '<div class="rare-badge">RARE</div>' : '';
+                const rareBonus = rod.isRare ? ' (1.5倍!)' : '';
+
+                card.innerHTML = `
+                    ${rareBadge}
+                    <div class="rod-name">${rod.name}</div>
+                    <div class="rod-price">💰 ${formatMoney(rod.price)}</div>
+                    <div class="rod-income">📈 +${formatMoney(rod.incomePerSec)}/秒${rareBonus}</div>
+                    <div class="rod-owned">所持: ${totalOwned}個</div>
+                `;
+
+                if (canAfford) {
+                    card.addEventListener('click', () => buyRod(rod));
+                }
+
+                shop.appendChild(card);
+            }
+        }
+
+        // 所持ブレインロッドを更新
+        function updateOwnedRods() {
+            const container = document.getElementById('owned-rods');
+            container.innerHTML = '';
+
+            // 通常とレアのエントリーを統合
+            const allEntries = [];
+
+            // 通常ロッド
+            for (const [rodId, count] of Object.entries(gameState.ownedRods)) {
+                if (count > 0) {
+                    allEntries.push({ rodId, count, isRare: false });
+                }
+            }
+
+            // レアロッド
+            for (const [rodId, count] of Object.entries(gameState.ownedRareRods)) {
+                if (count > 0) {
+                    allEntries.push({ rodId, count, isRare: true });
+                }
+            }
+
+            if (allEntries.length === 0) {
+                container.innerHTML = '<p style="color: #888;">まだブレインロッドを持っていません</p>';
+                return;
+            }
+
+            // 収入が高い順にソート
+            allEntries.sort((a, b) => {
+                const getIncome = (entry) => {
+                    const parts = entry.rodId.split('_');
+                    const tier = parseInt(parts[1]);
+                    const index = parseInt(parts[2]);
+                    const basePrice = Math.pow(10, tier + 2);
+                    const price = basePrice * (index + 1);
+                    const multiplier = entry.isRare ? RARE_MULTIPLIER : 1;
+                    return (price / 100) * multiplier * entry.count;
+                };
+                return getIncome(b) - getIncome(a);
+            });
+
+            for (const entry of allEntries) {
+                const parts = entry.rodId.split('_');
+                const tier = parseInt(parts[1]);
+                const index = parseInt(parts[2]);
+                const names = rodNames[Math.min(tier, rodNames.length - 1)];
+                const basePrice = Math.pow(10, tier + 2);
+                const price = basePrice * (index + 1);
+                const multiplier = entry.isRare ? RARE_MULTIPLIER : 1;
+                const incomePerSec = (price / 100) * multiplier * entry.count;
+
+                const card = document.createElement('div');
+                card.className = `owned-card ${entry.isRare ? 'rare' : ''}`;
+                const rareLabel = entry.isRare ? ' [RARE]' : '';
+                card.innerHTML = `
+                    <div class="owned-name">${names[index]}${rareLabel}</div>
+                    <div class="owned-count">${entry.count}個</div>
+                    <div class="owned-total-income">+${formatMoney(incomePerSec)}/秒</div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        // ブレインロッドを購入
+        function buyRod(rod) {
+            if (gameState.money >= rod.price) {
+                gameState.money -= rod.price;
+
+                // レアか通常かで保存先を分ける
+                if (rod.isRare) {
+                    gameState.ownedRareRods[rod.id] = (gameState.ownedRareRods[rod.id] || 0) + 1;
+                } else {
+                    gameState.ownedRods[rod.id] = (gameState.ownedRods[rod.id] || 0) + 1;
+                }
+
+                // 購入後、次のレア判定をリセット（次に表示されるときに再判定）
+                delete shopRareState[rod.id];
+
+                gameState.incomePerSecond = calculateIncome();
+
+                updateDisplay();
+                updateShop();
+                updateOwnedRods();
+            }
+        }
+
+        // 表示を更新
+        function updateDisplay() {
+            document.getElementById('money').textContent = formatMoney(gameState.money);
+            document.getElementById('income-rate').textContent =
+                `収入: ${formatMoney(gameState.incomePerSecond)}/秒`;
+            const totalNormal = Object.values(gameState.ownedRods).reduce((a, b) => a + b, 0);
+            const totalRare = Object.values(gameState.ownedRareRods).reduce((a, b) => a + b, 0);
+            document.getElementById('total-rods').textContent = totalNormal + totalRare;
+            document.getElementById('total-earned').textContent = formatMoney(gameState.totalEarned);
+        }
+
+        // ゲームループ
+        let lastTier = -1;
+        function gameLoop() {
+            // 収入を追加
+            const income = gameState.incomePerSecond / 10; // 100msごとなので10分の1
+            gameState.money += income;
+            gameState.totalEarned += income;
+
+            updateDisplay();
+
+            // 桁が変わったらショップを更新
+            const currentTier = getCurrentTier();
+            if (currentTier !== lastTier) {
+                lastTier = currentTier;
+                updateShop();
+            }
+        }
+
+        // 初期化
+        function init() {
+            // セーブデータをロード
+            const loaded = loadGame();
+            if (loaded) {
+                document.getElementById('save-status').textContent = '自動保存: データ復元完了';
+            } else {
+                document.getElementById('save-status').textContent = '自動保存: 新規ゲーム';
+            }
+
+            updateDisplay();
+            updateShop();
+            updateOwnedRods();
+
+            // 100msごとにゲームループを実行
+            setInterval(gameLoop, 100);
+
+            // 1秒ごとにショップの購入可否を更新
+            setInterval(updateShop, 1000);
+
+            // 10秒ごとに自動セーブ
+            setInterval(saveGame, 10000);
+
+            // ボタンのイベント設定
+            document.getElementById('save-btn').addEventListener('click', saveGame);
+            document.getElementById('reset-btn').addEventListener('click', resetGame);
+
+            // ページを閉じる前にセーブ
+            window.addEventListener('beforeunload', saveGame);
+        }
+
+        // ゲーム開始
+        init();
+    </script>
+</body>
+</html>

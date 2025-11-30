@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 280px;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
+    }
+
+    h1 {
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 15px;
+      color: #00d4ff;
+    }
+
+    .status {
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .status.on {
+      background: rgba(78, 205, 196, 0.3);
+      color: #4ecdc4;
+    }
+
+    .status.off {
+      background: rgba(255, 107, 107, 0.3);
+      color: #ff6b6b;
+    }
+
+    .toggle-btn {
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    .toggle-btn.start {
+      background: linear-gradient(135deg, #4ecdc4, #44a08d);
+      color: #fff;
+    }
+
+    .toggle-btn.stop {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+      color: #fff;
+    }
+
+    .toggle-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .interval-section {
+      margin-top: 10px;
+    }
+
+    .interval-label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 5px;
+    }
+
+    .interval-select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #3d3d5c;
+      background: #2d2d44;
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .info {
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 5px;
+      font-size: 11px;
+      color: #888;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>ブレインロッド オートクリッカー</h1>
+
+  <div class="status off" id="status">停止中</div>
+
+  <button class="toggle-btn start" id="toggleBtn">開始</button>
+
+  <div class="interval-section">
+    <div class="interval-label">クリック間隔</div>
+    <select class="interval-select" id="intervalSelect">
+      <option value="50">超高速 (50ms)</option>
+      <option value="100" selected>高速 (100ms)</option>
+      <option value="200">通常 (200ms)</option>
+      <option value="500">ゆっくり (500ms)</option>
+      <option value="1000">超ゆっくり (1秒)</option>
+    </select>
+  </div>
+
+  <div class="info">
+    ブレインロッドゲームのページで使用してください
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
