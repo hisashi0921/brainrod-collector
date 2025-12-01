@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3Dクラフトマスター・アドベンチャー 🎮</title>
+    <title>ブレインロッド町づくり 🧠🏠</title>
     <style>
         * {
             margin: 0;
@@ -146,7 +146,7 @@
             font-size: 20px;
         }
 
-        #craft-button, #recipe-button, #save-button, #load-button, #reset-button, #time-button {
+        #craft-button, #recipe-button, #save-button, #load-button, #reset-button, #time-button, #shop-button {
             position: absolute;
             top: 20px;
             background: rgba(139, 69, 19, 0.9);
@@ -167,25 +167,30 @@
             right: 140px;
         }
 
-        #save-button {
+        #shop-button {
             right: 260px;
+            background: rgba(0, 100, 0, 0.9);
+        }
+
+        #save-button {
+            right: 400px;
         }
 
         #load-button {
-            right: 360px;
+            right: 500px;
         }
 
         #reset-button {
-            right: 480px;
+            right: 620px;
             background: rgba(139, 0, 0, 0.9);
         }
 
         #time-button {
-            right: 600px;
+            right: 740px;
             background: rgba(30, 30, 80, 0.9);
         }
 
-        #craft-button:hover, #recipe-button:hover, #save-button:hover, #load-button:hover, #reset-button:hover, #time-button:hover {
+        #craft-button:hover, #recipe-button:hover, #save-button:hover, #load-button:hover, #reset-button:hover, #time-button:hover, #shop-button:hover {
             background: rgba(139, 69, 19, 1);
         }
 
@@ -197,7 +202,11 @@
             background: rgba(50, 50, 120, 1);
         }
 
-        #crafting-menu, #recipe-menu {
+        #shop-button:hover {
+            background: rgba(0, 150, 0, 1);
+        }
+
+        #crafting-menu, #recipe-menu, #shop-menu {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -211,6 +220,76 @@
             max-width: 90%;
             max-height: 80%;
             overflow-y: auto;
+        }
+
+        #shop-menu {
+            background: rgba(0, 80, 0, 0.95);
+            border-color: #006400;
+            min-width: 500px;
+        }
+
+        #shop-menu h2 {
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #shop-menu h3 {
+            color: #90EE90;
+            margin: 20px 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #90EE90;
+        }
+
+        .shop-item {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .shop-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .shop-icon {
+            font-size: 24px;
+        }
+
+        .shop-name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .shop-desc {
+            font-size: 12px;
+            color: #90EE90;
+        }
+
+        .shop-owned {
+            font-size: 12px;
+            color: #FFD700;
+        }
+
+        .shop-buy-btn {
+            background: #FFD700;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .shop-buy-btn:hover {
+            background: #FFA500;
         }
 
         #crafting-menu h2, #recipe-menu h2 {
@@ -410,7 +489,7 @@
 </head>
 <body>
     <div id="loading">
-        <h1>3Dクラフトマスター読み込み中...</h1>
+        <h1>🧠 ブレインロッド町づくり読み込み中...</h1>
         <div class="spinner"></div>
     </div>
 
@@ -423,13 +502,18 @@
         <div id="stats">
             <div>時刻: <span id="time-display">正午</span></div>
             <div class="health-bar" id="health-bar"></div>
-            <div>敵の数: <span id="enemy-count">0</span></div>
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #555;">
+                <div style="font-size: 18px; color: #FFD700;">💰 <span id="coins-display">100</span>円</div>
+                <div style="font-size: 12px; color: #90EE90;">毎秒 +<span id="income-display">0</span>円</div>
+                <div style="font-size: 12px;">🧠 ブレインロッド: <span id="brainrod-count">0</span>個</div>
+            </div>
         </div>
 
         <button id="time-button">🌙 夜にする</button>
         <button id="reset-button">🔄 リセット</button>
         <button id="load-button">📂 ロード</button>
         <button id="save-button">💾 セーブ</button>
+        <button id="shop-button">🛒 ショップ</button>
         <button id="recipe-button">📖 レシピ</button>
         <button id="craft-button">🔨 クラフト</button>
 
@@ -473,7 +557,14 @@
         <button id="close-recipe">閉じる</button>
     </div>
 
+    <div id="shop-menu">
+        <h2>🛒 ショップ - 町づくり</h2>
+        <div id="shop-list"></div>
+        <button id="close-shop">閉じる</button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="economy.js"></script>
     <script src="crafting.js"></script>
     <script src="world.js"></script>
     <script src="player.js"></script>

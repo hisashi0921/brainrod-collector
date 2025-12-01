@@ -23,6 +23,10 @@ class Game {
         this.player = new Player(this.camera, this.world);
         this.enemyManager = new EnemyManager(this.scene, this.world);
 
+        // 経済システム（ブレインロッド用）
+        this.economySystem = new EconomySystem();
+        window.economySystem = this.economySystem;
+
         // インベントリとクラフティング
         window.inventory = new Inventory();
         this.craftingSystem = new CraftingSystem(window.inventory);
@@ -33,7 +37,8 @@ class Game {
             this.craftingSystem,
             this.player,
             this.dayNightCycle,
-            this.enemyManager
+            this.enemyManager,
+            this.economySystem
         );
         window.uiManager = this.uiManager;
 
@@ -318,6 +323,25 @@ class Game {
                 const placed = this.player.placeBlock(selectedItem.type);
                 if (placed) {
                     window.inventory.removeItem(selectedItem.type, 1);
+
+                    // ブレインロッドを設置した場合、経済システムに登録
+                    const brainRodTypeMap = {
+                        [ItemType.BRAIN_ROD]: 'basic',
+                        [ItemType.SILVER_BRAIN_ROD]: 'silver',
+                        [ItemType.GOLD_BRAIN_ROD]: 'gold',
+                        [ItemType.DIAMOND_BRAIN_ROD]: 'diamond'
+                    };
+
+                    if (brainRodTypeMap[selectedItem.type]) {
+                        const position = this.player.getTargetBlock();
+                        this.economySystem.brainRods.push({
+                            id: Date.now(),
+                            type: brainRodTypeMap[selectedItem.type],
+                            position: position ? position.placePosition : { x: 0, y: 0, z: 0 },
+                            createdAt: Date.now()
+                        });
+                        console.log(`🧠 ${info.name}を設置！毎秒 ${this.economySystem.brainRodTypes[brainRodTypeMap[selectedItem.type]].income}円稼ぎます`);
+                    }
                 }
             }
         }
@@ -411,12 +435,15 @@ class Game {
         // 昼夜サイクル更新
         this.dayNightCycle.update(deltaTime);
 
-        // 敵更新（3フレームに1回に間引き、CPU削減）
-        this.enemyUpdateCounter++;
-        if (this.enemyUpdateCounter >= this.enemyUpdateInterval) {
-            this.enemyManager.update(deltaTime * this.enemyUpdateInterval, this.player, this.dayNightCycle.isNight());
-            this.enemyUpdateCounter = 0;
-        }
+        // 経済システム更新（ブレインロッドの収入）
+        this.economySystem.update(deltaTime);
+
+        // 敵は無効化（町づくりモード）
+        // this.enemyUpdateCounter++;
+        // if (this.enemyUpdateCounter >= this.enemyUpdateInterval) {
+        //     this.enemyManager.update(deltaTime * this.enemyUpdateInterval, this.player, this.dayNightCycle.isNight());
+        //     this.enemyUpdateCounter = 0;
+        // }
 
         // UI更新
         this.uiManager.updateStats();
@@ -478,7 +505,8 @@ class Game {
                     modifiedBlocks: Array.from(this.world.blockData.entries()),
                     seed: this.world.seed  // シード値を保存
                 },
-                time: this.dayNightCycle.currentTime
+                time: this.dayNightCycle.currentTime,
+                economy: this.economySystem.serialize()
             };
 
             localStorage.setItem('minecraftSave', JSON.stringify(saveData));
@@ -541,6 +569,11 @@ class Game {
 
             // 時刻
             this.dayNightCycle.currentTime = saveData.time;
+
+            // 経済システム
+            if (saveData.economy) {
+                this.economySystem.deserialize(saveData.economy);
+            }
 
             // 画面更新
             this.world.renderVisibleBlocks(
@@ -684,16 +717,24 @@ window.fixPlayer = () => {
     }
 };
 
+window.addCoins = (amount) => {
+    if (window.economySystem) {
+        window.economySystem.addCoins(amount);
+        console.log(`💰 ${amount}円を追加しました！現在: ${window.economySystem.getCoins()}円`);
+    }
+};
+
 console.log(`
-🎮 3Dクラフトマスター・アドベンチャー 🎮
+🧠 ブレインロッド町づくり 🏠
 
 デバッグコマンド:
 - giveItem(ItemType.DIAMOND, 10) : アイテムを入手
+- giveItem(ItemType.BRAIN_ROD, 1) : ブレインロッドを入手
+- addCoins(1000) : お金を追加
 - setTime('noon') : 時刻を変更 (noon/midnight/sunrise/sunset)
 - teleport(100, 50, 100) : テレポート
-- clearEnemies() : 敵を全削除
 - checkBlocks() : プレイヤー周囲のブロック情報を表示
-- fixPlayer() : プレイヤーを地面の上に移動（埋まった時の修正）
+- fixPlayer() : プレイヤーを地面の上に移動
 
 操作方法:
 - WASD / 矢印キー : 移動
@@ -701,7 +742,9 @@ console.log(`
 - マウス : 視点移動
 - 左クリック長押し : ブロック破壊
 - 右クリック : ブロック設置
-- F : 敵を攻撃
 - 1-9 : アイテム選択
 - マウスホイール : アイテム切り替え
+
+💡 ブレインロッドを設置すると毎秒お金が稼げます！
+💡 ショップでブレインロッドや建物を購入できます！
 `);

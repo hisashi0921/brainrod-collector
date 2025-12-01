@@ -86,7 +86,23 @@ const ItemType = {
     COFFEE: 67,
     LEMON: 68,
     LEMONADE: 69,
-    WHEAT: 70
+    WHEAT: 70,
+
+    // ブレインロッド (71-74)
+    BRAIN_ROD: 71,
+    SILVER_BRAIN_ROD: 72,
+    GOLD_BRAIN_ROD: 73,
+    DIAMOND_BRAIN_ROD: 74,
+
+    // 町の建物 (75-82)
+    BUILDING_HOUSE: 75,
+    BUILDING_SHOP: 76,
+    BUILDING_FACTORY: 77,
+    BUILDING_TOWER: 78,
+    BUILDING_CASTLE: 79,
+    BUILDING_SCHOOL: 80,
+    BUILDING_HOSPITAL: 81,
+    BUILDING_PARK: 82
 };
 
 // アイテム情報
@@ -169,7 +185,23 @@ const itemInfo = {
     [ItemType.COFFEE]: { name: 'コーヒー', color: 0x6F4E37, icon: '☕', drops: ItemType.COFFEE, solid: true },
     [ItemType.LEMON]: { name: 'レモン', color: 0xFFFF00, icon: '🍋', drops: ItemType.LEMON, solid: true }, // 鮮やかな黄色
     [ItemType.LEMONADE]: { name: 'レモネード', color: 0xFFFACD, icon: '🍹', drops: ItemType.LEMONADE, solid: true },
-    [ItemType.WHEAT]: { name: '小麦', color: 0xFFFF66, icon: '🌾麦', drops: ItemType.WHEAT, solid: true } // 明るい黄色で目立つ
+    [ItemType.WHEAT]: { name: '小麦', color: 0xFFFF66, icon: '🌾麦', drops: ItemType.WHEAT, solid: true }, // 明るい黄色で目立つ
+
+    // ブレインロッド（お金を稼ぐキャラクター）
+    [ItemType.BRAIN_ROD]: { name: 'ブレインロッド', color: 0x9932CC, icon: '🧠', drops: ItemType.BRAIN_ROD, solid: true },
+    [ItemType.SILVER_BRAIN_ROD]: { name: 'シルバーブレインロッド', color: 0xC0C0C0, icon: '🧠✨', drops: ItemType.SILVER_BRAIN_ROD, solid: true },
+    [ItemType.GOLD_BRAIN_ROD]: { name: 'ゴールドブレインロッド', color: 0xFFD700, icon: '🧠💛', drops: ItemType.GOLD_BRAIN_ROD, solid: true },
+    [ItemType.DIAMOND_BRAIN_ROD]: { name: 'ダイヤブレインロッド', color: 0x00FFFF, icon: '🧠💎', drops: ItemType.DIAMOND_BRAIN_ROD, solid: true },
+
+    // 町の建物
+    [ItemType.BUILDING_HOUSE]: { name: '家', color: 0xDEB887, icon: '🏠', drops: ItemType.BUILDING_HOUSE, solid: true },
+    [ItemType.BUILDING_SHOP]: { name: 'お店', color: 0xFFB6C1, icon: '🏪', drops: ItemType.BUILDING_SHOP, solid: true },
+    [ItemType.BUILDING_FACTORY]: { name: '工場', color: 0x808080, icon: '🏭', drops: ItemType.BUILDING_FACTORY, solid: true },
+    [ItemType.BUILDING_TOWER]: { name: 'タワー', color: 0xADD8E6, icon: '🗼', drops: ItemType.BUILDING_TOWER, solid: true },
+    [ItemType.BUILDING_CASTLE]: { name: '城', color: 0xD4AF37, icon: '🏰', drops: ItemType.BUILDING_CASTLE, solid: true },
+    [ItemType.BUILDING_SCHOOL]: { name: '学校', color: 0xFFA07A, icon: '🏫', drops: ItemType.BUILDING_SCHOOL, solid: true },
+    [ItemType.BUILDING_HOSPITAL]: { name: '病院', color: 0xFFFFFF, icon: '🏥', drops: ItemType.BUILDING_HOSPITAL, solid: true },
+    [ItemType.BUILDING_PARK]: { name: '公園', color: 0x90EE90, icon: '🏞️', drops: ItemType.BUILDING_PARK, solid: true }
 };
 
 // 2x2レシピ（手でクラフト可能）
@@ -222,7 +254,23 @@ const recipes3x3 = [
 
     // 飲料
     { pattern: [ItemType.SUGAR, ItemType.COCOA_BEANS, ItemType.ICE, ItemType.WATER_BUCKET, 0, 0, 0, 0, 0], result: ItemType.COLA, count: 1 },
-    { pattern: [ItemType.LEMON, ItemType.SUGAR, 0, ItemType.WATER_BUCKET, 0, 0, 0, 0, 0], result: ItemType.LEMONADE, count: 1 }
+    { pattern: [ItemType.LEMON, ItemType.SUGAR, 0, ItemType.WATER_BUCKET, 0, 0, 0, 0, 0], result: ItemType.LEMONADE, count: 1 },
+
+    // ブレインロッド（お金を稼ぐキャラクター）
+    { pattern: [ItemType.IRON_INGOT, ItemType.DIAMOND, ItemType.IRON_INGOT, ItemType.STICK, ItemType.GOLD_INGOT, ItemType.STICK, 0, ItemType.STICK, 0], result: ItemType.BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.IRON_INGOT, ItemType.BRAIN_ROD, ItemType.IRON_INGOT, ItemType.IRON_INGOT, ItemType.IRON_INGOT, ItemType.IRON_INGOT, 0, 0, 0], result: ItemType.SILVER_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.GOLD_INGOT, ItemType.BRAIN_ROD, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, 0, 0, 0], result: ItemType.GOLD_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND, ItemType.GOLD_BRAIN_ROD, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND], result: ItemType.DIAMOND_BRAIN_ROD, count: 1 },
+
+    // 町の建物
+    { pattern: [ItemType.PLANKS, ItemType.PLANKS, ItemType.PLANKS, ItemType.PLANKS, 0, ItemType.PLANKS, ItemType.BRICK, ItemType.BRICK, ItemType.BRICK], result: ItemType.BUILDING_HOUSE, count: 1 },
+    { pattern: [ItemType.BRICK, ItemType.GLASS, ItemType.BRICK, ItemType.BRICK, ItemType.DOOR, ItemType.BRICK, ItemType.BRICK, ItemType.BRICK, ItemType.BRICK], result: ItemType.BUILDING_SHOP, count: 1 },
+    { pattern: [ItemType.IRON_BLOCK, ItemType.IRON_BLOCK, ItemType.IRON_BLOCK, ItemType.STONE, ItemType.FURNACE, ItemType.STONE, ItemType.STONE, ItemType.STONE, ItemType.STONE], result: ItemType.BUILDING_FACTORY, count: 1 },
+    { pattern: [0, ItemType.IRON_BLOCK, 0, 0, ItemType.IRON_BLOCK, 0, ItemType.IRON_BLOCK, ItemType.IRON_BLOCK, ItemType.IRON_BLOCK], result: ItemType.BUILDING_TOWER, count: 1 },
+    { pattern: [ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK, ItemType.STONE, ItemType.DIAMOND_BLOCK, ItemType.STONE, ItemType.STONE, ItemType.DOOR, ItemType.STONE], result: ItemType.BUILDING_CASTLE, count: 1 },
+    { pattern: [ItemType.BRICK, ItemType.BRICK, ItemType.BRICK, ItemType.GLASS, ItemType.DOOR, ItemType.GLASS, ItemType.BRICK, ItemType.BRICK, ItemType.BRICK], result: ItemType.BUILDING_SCHOOL, count: 1 },
+    { pattern: [ItemType.BRICK, ItemType.TORCH, ItemType.BRICK, ItemType.GLASS, ItemType.DOOR, ItemType.GLASS, ItemType.BRICK, ItemType.BRICK, ItemType.BRICK], result: ItemType.BUILDING_HOSPITAL, count: 1 },
+    { pattern: [ItemType.LEAVES, ItemType.FLOWER_RED, ItemType.LEAVES, ItemType.GRASS, ItemType.GRASS, ItemType.GRASS, ItemType.DIRT, ItemType.DIRT, ItemType.DIRT], result: ItemType.BUILDING_PARK, count: 1 }
 ];
 
 // グローバルに公開

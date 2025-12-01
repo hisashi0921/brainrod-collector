@@ -1,13 +1,15 @@
 class UIManager {
-    constructor(inventory, craftingSystem, player, dayNightCycle, enemyManager) {
+    constructor(inventory, craftingSystem, player, dayNightCycle, enemyManager, economySystem) {
         this.inventory = inventory;
         this.craftingSystem = craftingSystem;
         this.player = player;
         this.dayNightCycle = dayNightCycle;
         this.enemyManager = enemyManager;
+        this.economySystem = economySystem;
 
         this.craftingMenuOpen = false;
         this.recipeMenuOpen = false;
+        this.shopMenuOpen = false;
 
         this.setupUI();
     }
@@ -35,6 +37,22 @@ class UIManager {
         document.getElementById('close-recipe').addEventListener('click', () => {
             this.toggleRecipeMenu();
         });
+
+        // ショップボタン
+        const shopButton = document.getElementById('shop-button');
+        if (shopButton) {
+            shopButton.addEventListener('click', () => {
+                this.toggleShopMenu();
+            });
+        }
+
+        // ショップメニューを閉じる
+        const closeShop = document.getElementById('close-shop');
+        if (closeShop) {
+            closeShop.addEventListener('click', () => {
+                this.toggleShopMenu();
+            });
+        }
 
         // クラフトグリッドのセットアップ
         this.setupCraftingGrid();
@@ -280,8 +298,121 @@ class UIManager {
             healthBar.appendChild(heart);
         }
 
-        // 敵の数
-        document.getElementById('enemy-count').textContent = this.enemyManager.getEnemyCount();
+        // 経済システム情報
+        if (this.economySystem) {
+            document.getElementById('coins-display').textContent = this.economySystem.getCoins().toLocaleString();
+            document.getElementById('income-display').textContent = this.economySystem.calculateIncome();
+            document.getElementById('brainrod-count').textContent = this.economySystem.getBrainRodCount();
+        }
+    }
+
+    toggleShopMenu() {
+        this.shopMenuOpen = !this.shopMenuOpen;
+        const menu = document.getElementById('shop-menu');
+
+        if (this.shopMenuOpen) {
+            menu.style.display = 'block';
+            document.exitPointerLock();
+            this.updateShopMenu();
+        } else {
+            menu.style.display = 'none';
+        }
+    }
+
+    updateShopMenu() {
+        const shopList = document.getElementById('shop-list');
+        if (!shopList || !this.economySystem) return;
+
+        shopList.innerHTML = '';
+
+        // ブレインロッドセクション
+        const brainRodSection = document.createElement('div');
+        brainRodSection.innerHTML = '<h3>🧠 ブレインロッド（お金を稼ぐ）</h3>';
+        shopList.appendChild(brainRodSection);
+
+        for (const [key, rod] of Object.entries(this.economySystem.brainRodTypes)) {
+            const item = document.createElement('div');
+            item.className = 'shop-item';
+            const owned = this.economySystem.getBrainRodCountByType(key);
+            item.innerHTML = `
+                <div class="shop-item-info">
+                    <span class="shop-icon">${rod.icon}</span>
+                    <span class="shop-name">${rod.name}</span>
+                    <span class="shop-desc">毎秒 ${rod.income}円</span>
+                    <span class="shop-owned">所有: ${owned}個</span>
+                </div>
+                <button class="shop-buy-btn" data-type="brainrod" data-key="${key}">${rod.price.toLocaleString()}円で購入</button>
+            `;
+            shopList.appendChild(item);
+        }
+
+        // 建物セクション
+        const buildingSection = document.createElement('div');
+        buildingSection.innerHTML = '<h3>🏠 町の建物</h3>';
+        shopList.appendChild(buildingSection);
+
+        for (const [key, building] of Object.entries(this.economySystem.buildings)) {
+            const item = document.createElement('div');
+            item.className = 'shop-item';
+            const owned = this.economySystem.ownedBuildings[key] || 0;
+            item.innerHTML = `
+                <div class="shop-item-info">
+                    <span class="shop-icon">${building.icon}</span>
+                    <span class="shop-name">${building.name}</span>
+                    <span class="shop-desc">${building.description}</span>
+                    <span class="shop-owned">所有: ${owned}個</span>
+                </div>
+                <button class="shop-buy-btn" data-type="building" data-key="${key}">${building.price.toLocaleString()}円で購入</button>
+            `;
+            shopList.appendChild(item);
+        }
+
+        // 購入ボタンにイベントリスナーを追加
+        const buyButtons = shopList.querySelectorAll('.shop-buy-btn');
+        buyButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const type = e.target.dataset.type;
+                const key = e.target.dataset.key;
+
+                let result;
+                if (type === 'brainrod') {
+                    result = this.economySystem.buyBrainRod(key);
+                    if (result.success) {
+                        // インベントリにブレインロッドを追加
+                        const itemTypeMap = {
+                            basic: ItemType.BRAIN_ROD,
+                            silver: ItemType.SILVER_BRAIN_ROD,
+                            gold: ItemType.GOLD_BRAIN_ROD,
+                            diamond: ItemType.DIAMOND_BRAIN_ROD
+                        };
+                        window.inventory.addItem(itemTypeMap[key], 1);
+                        this.updateHotbar();
+                    }
+                } else if (type === 'building') {
+                    result = this.economySystem.buyBuilding(key);
+                    if (result.success) {
+                        // インベントリに建物を追加
+                        const itemTypeMap = {
+                            house: ItemType.BUILDING_HOUSE,
+                            shop: ItemType.BUILDING_SHOP,
+                            factory: ItemType.BUILDING_FACTORY,
+                            tower: ItemType.BUILDING_TOWER,
+                            castle: ItemType.BUILDING_CASTLE,
+                            school: ItemType.BUILDING_SCHOOL,
+                            hospital: ItemType.BUILDING_HOSPITAL,
+                            park: ItemType.BUILDING_PARK
+                        };
+                        window.inventory.addItem(itemTypeMap[key], 1);
+                        this.updateHotbar();
+                    }
+                }
+
+                if (result) {
+                    alert(result.message);
+                    this.updateShopMenu();
+                }
+            });
+        });
     }
 
     isCraftingMenuOpen() {
@@ -293,7 +424,11 @@ class UIManager {
     }
 
     isAnyMenuOpen() {
-        return this.craftingMenuOpen || this.recipeMenuOpen;
+        return this.craftingMenuOpen || this.recipeMenuOpen || this.shopMenuOpen;
+    }
+
+    isShopMenuOpen() {
+        return this.shopMenuOpen;
     }
 }
 
