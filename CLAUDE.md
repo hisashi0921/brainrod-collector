@@ -10,29 +10,31 @@ A 2D Minecraft-inspired crafting game for Japanese elementary school students. B
 
 ### Module Load Order (Critical)
 Files must load in this exact sequence in `index.html`:
-1. `crafting.js` - Defines ItemType enum and recipes
-2. `tools.js` - Mining system
-3. `daynight.js` - Day/night cycle
-4. `enemies.js` - Enemy AI
-5. `chest.js` - Storage system
-6. `recipebook.js` - Recipe UI
-7. `game.js` - Main game loop (must be second to last)
-8. `isometric.js` - 3D rendering (must be last, uses BLOCK_SIZE from game.js)
+1. `economy.js` - Economy system (coins, BrainRods)
+2. `crafting.js` - Defines ItemType enum and recipes
+3. `world.js` - World/chunk management
+4. `structures.js` - Structure generation (auto-builds buildings when placed)
+5. `player.js` - Player controls and physics
+6. `enemies.js` - Enemy AI
+7. `daynight.js` - Day/night cycle
+8. `inventory.js` - Inventory management
+9. `ui.js` - UI management
+10. `game.js` - Main game loop (must be last)
 
 ### Global State Management
 Each module exposes objects via `window`:
 - `window.ItemType` - All item/block IDs
 - `window.recipes2x2`, `window.recipes3x3` - Crafting patterns
-- `window.MiningSystem` - Mining mechanics
 - `window.EnemyManager` - Enemy spawning/AI
 - `window.DayNightCycle` - Time system
 - `window.inventory` - Player inventory
-- `window.isometricRenderer` - 2D/3D toggle
+- `window.economySystem` - Coin/BrainRod economy
+- `window.structureGenerator` - Auto-building generation
 
 ### Core Systems
 
 #### Item/Block System
-Items use numeric IDs (0-60+). Key ranges:
+Items use numeric IDs (0-82). Key ranges:
 - 0: AIR (empty)
 - 1-6: Natural blocks (dirt, grass, stone, wood, leaves, sand)
 - 7-22: Crafted blocks
@@ -40,7 +42,21 @@ Items use numeric IDs (0-60+). Key ranges:
 - 33-36: Ores
 - 37-41: Swords
 - 42-49: Armor
-- 50-55: Combat items
+- 50-60: Combat items & food
+- 61-70: Drinks & ingredients
+- 71-74: BrainRods (economy)
+- 75-82: Building blocks (auto-generate structures)
+
+#### Structure Generation System
+When building blocks (75-82) are placed, they automatically generate full structures:
+- `BUILDING_HOUSE` (75): 5x6 house with brick walls, door, windows, roof
+- `BUILDING_SHOP` (76): Shop with glass storefront and counter
+- `BUILDING_FACTORY` (77): Factory with furnaces and chimneys
+- `BUILDING_TOWER` (78): Tall observation tower with antenna
+- `BUILDING_CASTLE` (79): Castle with corner towers and throne
+- `BUILDING_SCHOOL` (80): Large school building with clock tower
+- `BUILDING_HOSPITAL` (81): Hospital with red cross symbol
+- `BUILDING_PARK` (82): Park with trees, flowers, and benches
 
 #### World Generation
 - Map size: 300x100 blocks
@@ -138,21 +154,25 @@ In `daynight.js`:
 ### Console Commands
 ```javascript
 // Give items
-inventory.addItem(ItemType.DIAMOND_SWORD, 5);
+giveItem(ItemType.DIAMOND_SWORD, 5);
+
+// Give all building blocks
+giveBuildings();
+
+// Add coins
+addCoins(1000);
 
 // Change time
-dayNightCycle.setToNoon();
-dayNightCycle.setToMidnight();
-
-// Spawn enemies (only works at night)
-enemyManager.spawnEnemy(world, player);
-
-// Toggle 3D
-isometricRenderer.toggle();
+setTime('noon');    // noon/midnight/sunrise/sunset
 
 // Teleport player
-player.x = 100 * BLOCK_SIZE;
-player.y = 20 * BLOCK_SIZE;
+teleport(100, 50, 100);
+
+// Check blocks around player
+checkBlocks();
+
+// Fix player position (stuck in ground)
+fixPlayer();
 ```
 
 ### Common Issues

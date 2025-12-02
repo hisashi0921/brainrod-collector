@@ -27,6 +27,10 @@ class Game {
         this.economySystem = new EconomySystem();
         window.economySystem = this.economySystem;
 
+        // 構造物生成システム
+        this.structureGenerator = new StructureGenerator(this.world);
+        window.structureGenerator = this.structureGenerator;
+
         // インベントリとクラフティング
         window.inventory = new Inventory();
         this.craftingSystem = new CraftingSystem(window.inventory);
@@ -320,6 +324,33 @@ class Game {
 
             // 固体ブロックのみ設置可能
             if (info && info.solid) {
+                // 構造物ブロックの場合は特別処理
+                if (this.structureGenerator.isStructureBlock(selectedItem.type)) {
+                    const target = this.player.getTargetBlock();
+                    if (target) {
+                        const placePos = {
+                            x: Math.floor(target.position.x + target.normal.x),
+                            y: Math.floor(target.position.y + target.normal.y),
+                            z: Math.floor(target.position.z + target.normal.z)
+                        };
+
+                        // 構造物を生成
+                        this.structureGenerator.generateStructure(selectedItem.type, placePos.x, placePos.y, placePos.z);
+                        this.structureGenerator.refreshChunks(placePos.x, placePos.z);
+                        window.inventory.removeItem(selectedItem.type, 1);
+
+                        // 強制的にチャンクを再描画
+                        this.world.renderVisibleBlocks(
+                            this.player.position.x,
+                            this.player.position.y,
+                            this.player.position.z,
+                            2,
+                            true
+                        );
+                    }
+                    return;
+                }
+
                 const placed = this.player.placeBlock(selectedItem.type);
                 if (placed) {
                     window.inventory.removeItem(selectedItem.type, 1);
@@ -724,12 +755,28 @@ window.addCoins = (amount) => {
     }
 };
 
+// 建物アイテムを入手するショートカット
+window.giveBuildings = () => {
+    if (window.inventory) {
+        window.inventory.addItem(ItemType.BUILDING_HOUSE, 3);
+        window.inventory.addItem(ItemType.BUILDING_PARK, 3);
+        window.inventory.addItem(ItemType.BUILDING_SHOP, 2);
+        window.inventory.addItem(ItemType.BUILDING_FACTORY, 2);
+        window.inventory.addItem(ItemType.BUILDING_TOWER, 2);
+        window.inventory.addItem(ItemType.BUILDING_CASTLE, 1);
+        window.inventory.addItem(ItemType.BUILDING_SCHOOL, 1);
+        window.inventory.addItem(ItemType.BUILDING_HOSPITAL, 1);
+        console.log('🏠 全ての建物ブロックを入手しました！');
+    }
+};
+
 console.log(`
 🧠 ブレインロッド町づくり 🏠
 
 デバッグコマンド:
 - giveItem(ItemType.DIAMOND, 10) : アイテムを入手
 - giveItem(ItemType.BRAIN_ROD, 1) : ブレインロッドを入手
+- giveBuildings() : 全ての建物ブロックを入手
 - addCoins(1000) : お金を追加
 - setTime('noon') : 時刻を変更 (noon/midnight/sunrise/sunset)
 - teleport(100, 50, 100) : テレポート
@@ -747,4 +794,5 @@ console.log(`
 
 💡 ブレインロッドを設置すると毎秒お金が稼げます！
 💡 ショップでブレインロッドや建物を購入できます！
+💡 🏠家ブロックや🏞️公園ブロックを置くと自動で建物が生成されます！
 `);
