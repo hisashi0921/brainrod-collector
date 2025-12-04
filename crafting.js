@@ -88,11 +88,41 @@ const ItemType = {
     LEMONADE: 69,
     WHEAT: 70,
 
-    // ブレインロッド (71-74)
-    BRAIN_ROD: 71,
-    SILVER_BRAIN_ROD: 72,
-    GOLD_BRAIN_ROD: 73,
-    DIAMOND_BRAIN_ROD: 74,
+    // ブレインロッド (71-74 + 83-103)
+    // 低価格帯（100-750円）
+    BRAIN_ROD: 71,              // 基本 100円
+    BRONZE_BRAIN_ROD: 83,       // ブロンズ 200円
+    COPPER_BRAIN_ROD: 84,       // 銅 300円
+    SILVER_BRAIN_ROD: 72,       // シルバー 500円
+    EMERALD_BRAIN_ROD: 85,      // エメラルド 750円
+
+    // 中価格帯（1000-3000円）
+    RUBY_BRAIN_ROD: 86,         // ルビー 1000円
+    SAPPHIRE_BRAIN_ROD: 87,     // サファイア 1500円
+    GOLD_BRAIN_ROD: 73,         // ゴールド 2000円
+    PLATINUM_BRAIN_ROD: 88,     // プラチナ 2500円
+    AMETHYST_BRAIN_ROD: 89,     // アメジスト 3000円
+
+    // 高価格帯（5000-15000円）
+    CRYSTAL_BRAIN_ROD: 90,      // クリスタル 5000円
+    OPAL_BRAIN_ROD: 91,         // オパール 7500円
+    DIAMOND_BRAIN_ROD: 74,      // ダイヤ 10000円
+    NEON_BRAIN_ROD: 92,         // ネオン 12500円
+    RAINBOW_BRAIN_ROD: 93,      // 虹 15000円
+
+    // プレミアム帯（20000-75000円）
+    MASTER_BRAIN_ROD: 94,       // マスター 20000円
+    LEGEND_BRAIN_ROD: 95,       // レジェンド 30000円
+    GALAXY_BRAIN_ROD: 96,       // ギャラクシー 40000円
+    COSMIC_BRAIN_ROD: 97,       // コズミック 50000円
+    INFINITY_BRAIN_ROD: 98,     // インフィニティ 75000円
+
+    // 超レア帯（100000円以上）
+    MYTHICAL_BRAIN_ROD: 99,     // ミシカル 100000円
+    ETERNAL_BRAIN_ROD: 100,     // エターナル 250000円
+    GOD_BRAIN_ROD: 101,         // ゴッド 500000円
+    OMEGA_BRAIN_ROD: 102,       // オメガ 1000000円
+    ULTIMATE_BRAIN_ROD: 103,    // アルティメット 5000000円
 
     // 町の建物 (75-82)
     BUILDING_HOUSE: 75,
@@ -188,10 +218,40 @@ const itemInfo = {
     [ItemType.WHEAT]: { name: '小麦', color: 0xFFFF66, icon: '🌾麦', drops: ItemType.WHEAT, solid: true }, // 明るい黄色で目立つ
 
     // ブレインロッド（お金を稼ぐキャラクター）
+    // 低価格帯（100-750円）
     [ItemType.BRAIN_ROD]: { name: 'ブレインロッド', color: 0x9932CC, icon: '🧠', drops: ItemType.BRAIN_ROD, solid: true },
+    [ItemType.BRONZE_BRAIN_ROD]: { name: 'ブロンズブレインロッド', color: 0xCD7F32, icon: '🧠🥉', drops: ItemType.BRONZE_BRAIN_ROD, solid: true },
+    [ItemType.COPPER_BRAIN_ROD]: { name: '銅ブレインロッド', color: 0xB87333, icon: '🧠🔶', drops: ItemType.COPPER_BRAIN_ROD, solid: true },
     [ItemType.SILVER_BRAIN_ROD]: { name: 'シルバーブレインロッド', color: 0xC0C0C0, icon: '🧠✨', drops: ItemType.SILVER_BRAIN_ROD, solid: true },
+    [ItemType.EMERALD_BRAIN_ROD]: { name: 'エメラルドブレインロッド', color: 0x50C878, icon: '🧠💚', drops: ItemType.EMERALD_BRAIN_ROD, solid: true },
+
+    // 中価格帯（1000-3000円）
+    [ItemType.RUBY_BRAIN_ROD]: { name: 'ルビーブレインロッド', color: 0xE0115F, icon: '🧠❤️', drops: ItemType.RUBY_BRAIN_ROD, solid: true },
+    [ItemType.SAPPHIRE_BRAIN_ROD]: { name: 'サファイアブレインロッド', color: 0x0F52BA, icon: '🧠💙', drops: ItemType.SAPPHIRE_BRAIN_ROD, solid: true },
     [ItemType.GOLD_BRAIN_ROD]: { name: 'ゴールドブレインロッド', color: 0xFFD700, icon: '🧠💛', drops: ItemType.GOLD_BRAIN_ROD, solid: true },
+    [ItemType.PLATINUM_BRAIN_ROD]: { name: 'プラチナブレインロッド', color: 0xE5E4E2, icon: '🧠⚪', drops: ItemType.PLATINUM_BRAIN_ROD, solid: true },
+    [ItemType.AMETHYST_BRAIN_ROD]: { name: 'アメジストブレインロッド', color: 0x9966CC, icon: '🧠💜', drops: ItemType.AMETHYST_BRAIN_ROD, solid: true },
+
+    // 高価格帯（5000-15000円）
+    [ItemType.CRYSTAL_BRAIN_ROD]: { name: 'クリスタルブレインロッド', color: 0xA7D8DE, icon: '🧠🔮', drops: ItemType.CRYSTAL_BRAIN_ROD, solid: true },
+    [ItemType.OPAL_BRAIN_ROD]: { name: 'オパールブレインロッド', color: 0xA8C3BC, icon: '🧠🌈', drops: ItemType.OPAL_BRAIN_ROD, solid: true },
     [ItemType.DIAMOND_BRAIN_ROD]: { name: 'ダイヤブレインロッド', color: 0x00FFFF, icon: '🧠💎', drops: ItemType.DIAMOND_BRAIN_ROD, solid: true },
+    [ItemType.NEON_BRAIN_ROD]: { name: 'ネオンブレインロッド', color: 0xFF1493, icon: '🧠⚡', drops: ItemType.NEON_BRAIN_ROD, solid: true },
+    [ItemType.RAINBOW_BRAIN_ROD]: { name: '虹ブレインロッド', color: 0xFF00FF, icon: '🧠🌈', drops: ItemType.RAINBOW_BRAIN_ROD, solid: true },
+
+    // プレミアム帯（20000-75000円）
+    [ItemType.MASTER_BRAIN_ROD]: { name: 'マスターブレインロッド', color: 0x4B0082, icon: '🧠👑', drops: ItemType.MASTER_BRAIN_ROD, solid: true },
+    [ItemType.LEGEND_BRAIN_ROD]: { name: 'レジェンドブレインロッド', color: 0x8B0000, icon: '🧠🔥', drops: ItemType.LEGEND_BRAIN_ROD, solid: true },
+    [ItemType.GALAXY_BRAIN_ROD]: { name: 'ギャラクシーブレインロッド', color: 0x191970, icon: '🧠🌌', drops: ItemType.GALAXY_BRAIN_ROD, solid: true },
+    [ItemType.COSMIC_BRAIN_ROD]: { name: 'コズミックブレインロッド', color: 0x2F0059, icon: '🧠✨', drops: ItemType.COSMIC_BRAIN_ROD, solid: true },
+    [ItemType.INFINITY_BRAIN_ROD]: { name: 'インフィニティブレインロッド', color: 0x7B68EE, icon: '🧠♾️', drops: ItemType.INFINITY_BRAIN_ROD, solid: true },
+
+    // 超レア帯（100000円以上）
+    [ItemType.MYTHICAL_BRAIN_ROD]: { name: 'ミシカルブレインロッド', color: 0xFFD700, icon: '🧠🏆', drops: ItemType.MYTHICAL_BRAIN_ROD, solid: true },
+    [ItemType.ETERNAL_BRAIN_ROD]: { name: 'エターナルブレインロッド', color: 0x00FF00, icon: '🧠🌟', drops: ItemType.ETERNAL_BRAIN_ROD, solid: true },
+    [ItemType.GOD_BRAIN_ROD]: { name: 'ゴッドブレインロッド', color: 0xFFFFFF, icon: '🧠⭐', drops: ItemType.GOD_BRAIN_ROD, solid: true },
+    [ItemType.OMEGA_BRAIN_ROD]: { name: 'オメガブレインロッド', color: 0x000000, icon: '🧠Ω', drops: ItemType.OMEGA_BRAIN_ROD, solid: true },
+    [ItemType.ULTIMATE_BRAIN_ROD]: { name: 'アルティメットブレインロッド', color: 0xFFD700, icon: '🧠🌞', drops: ItemType.ULTIMATE_BRAIN_ROD, solid: true },
 
     // 町の建物
     [ItemType.BUILDING_HOUSE]: { name: '家', color: 0xDEB887, icon: '🏠', drops: ItemType.BUILDING_HOUSE, solid: true },
@@ -256,11 +316,44 @@ const recipes3x3 = [
     { pattern: [ItemType.SUGAR, ItemType.COCOA_BEANS, ItemType.ICE, ItemType.WATER_BUCKET, 0, 0, 0, 0, 0], result: ItemType.COLA, count: 1 },
     { pattern: [ItemType.LEMON, ItemType.SUGAR, 0, ItemType.WATER_BUCKET, 0, 0, 0, 0, 0], result: ItemType.LEMONADE, count: 1 },
 
+    // ═══════════════════════════════════════════════════════════════
     // ブレインロッド（お金を稼ぐキャラクター）
+    // ═══════════════════════════════════════════════════════════════
+
+    // 低価格帯（100-750円）
     { pattern: [ItemType.IRON_INGOT, ItemType.DIAMOND, ItemType.IRON_INGOT, ItemType.STICK, ItemType.GOLD_INGOT, ItemType.STICK, 0, ItemType.STICK, 0], result: ItemType.BRAIN_ROD, count: 1 },
-    { pattern: [ItemType.IRON_INGOT, ItemType.BRAIN_ROD, ItemType.IRON_INGOT, ItemType.IRON_INGOT, ItemType.IRON_INGOT, ItemType.IRON_INGOT, 0, 0, 0], result: ItemType.SILVER_BRAIN_ROD, count: 1 },
-    { pattern: [ItemType.GOLD_INGOT, ItemType.BRAIN_ROD, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, 0, 0, 0], result: ItemType.GOLD_BRAIN_ROD, count: 1 },
-    { pattern: [ItemType.DIAMOND, ItemType.GOLD_BRAIN_ROD, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND], result: ItemType.DIAMOND_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.COAL, ItemType.BRAIN_ROD, ItemType.COAL, ItemType.COAL, ItemType.IRON_INGOT, ItemType.COAL, 0, 0, 0], result: ItemType.BRONZE_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.IRON_INGOT, ItemType.BRONZE_BRAIN_ROD, ItemType.IRON_INGOT, ItemType.COAL, ItemType.COAL, ItemType.COAL, 0, 0, 0], result: ItemType.COPPER_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.IRON_INGOT, ItemType.COPPER_BRAIN_ROD, ItemType.IRON_INGOT, ItemType.IRON_INGOT, ItemType.IRON_INGOT, ItemType.IRON_INGOT, 0, 0, 0], result: ItemType.SILVER_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.LEAVES, ItemType.SILVER_BRAIN_ROD, ItemType.LEAVES, ItemType.LEAVES, ItemType.DIAMOND, ItemType.LEAVES, 0, 0, 0], result: ItemType.EMERALD_BRAIN_ROD, count: 1 },
+
+    // 中価格帯（1000-3000円）
+    { pattern: [ItemType.IRON_INGOT, ItemType.EMERALD_BRAIN_ROD, ItemType.IRON_INGOT, ItemType.COAL, ItemType.DIAMOND, ItemType.COAL, 0, 0, 0], result: ItemType.RUBY_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND, ItemType.RUBY_BRAIN_ROD, ItemType.DIAMOND, ItemType.IRON_INGOT, ItemType.IRON_INGOT, ItemType.IRON_INGOT, 0, 0, 0], result: ItemType.SAPPHIRE_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.GOLD_INGOT, ItemType.SAPPHIRE_BRAIN_ROD, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, 0, 0, 0], result: ItemType.GOLD_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.IRON_INGOT, ItemType.GOLD_BRAIN_ROD, ItemType.IRON_INGOT, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, 0, 0, 0], result: ItemType.PLATINUM_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND, ItemType.PLATINUM_BRAIN_ROD, ItemType.DIAMOND, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, 0, 0, 0], result: ItemType.AMETHYST_BRAIN_ROD, count: 1 },
+
+    // 高価格帯（5000-15000円）
+    { pattern: [ItemType.GLASS, ItemType.AMETHYST_BRAIN_ROD, ItemType.GLASS, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND], result: ItemType.CRYSTAL_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.GOLD_INGOT, ItemType.CRYSTAL_BRAIN_ROD, ItemType.GOLD_INGOT, ItemType.DIAMOND, ItemType.RAINBOW_BLOCK, ItemType.DIAMOND, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT, ItemType.GOLD_INGOT], result: ItemType.OPAL_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND, ItemType.OPAL_BRAIN_ROD, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND], result: ItemType.DIAMOND_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.TORCH, ItemType.DIAMOND_BRAIN_ROD, ItemType.TORCH, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.TORCH, ItemType.TORCH, ItemType.TORCH], result: ItemType.NEON_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.RAINBOW_BLOCK, ItemType.NEON_BRAIN_ROD, ItemType.RAINBOW_BLOCK, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.DIAMOND, ItemType.RAINBOW_BLOCK, ItemType.RAINBOW_BLOCK, ItemType.RAINBOW_BLOCK], result: ItemType.RAINBOW_BRAIN_ROD, count: 1 },
+
+    // プレミアム帯（20000-75000円）
+    { pattern: [ItemType.GOLD_BLOCK, ItemType.RAINBOW_BRAIN_ROD, ItemType.GOLD_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK], result: ItemType.MASTER_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND_BLOCK, ItemType.MASTER_BRAIN_ROD, ItemType.DIAMOND_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK], result: ItemType.LEGEND_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND_BLOCK, ItemType.LEGEND_BRAIN_ROD, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK], result: ItemType.GALAXY_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND_BLOCK, ItemType.GALAXY_BRAIN_ROD, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.GOLD_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK], result: ItemType.COSMIC_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND_BLOCK, ItemType.COSMIC_BRAIN_ROD, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK], result: ItemType.INFINITY_BRAIN_ROD, count: 1 },
+
+    // 超レア帯（100000円以上）⭐
+    { pattern: [ItemType.GOLD_BLOCK, ItemType.INFINITY_BRAIN_ROD, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK], result: ItemType.MYTHICAL_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND_BLOCK, ItemType.MYTHICAL_BRAIN_ROD, ItemType.DIAMOND_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK, ItemType.GOLD_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.GOLD_BLOCK, ItemType.DIAMOND_BLOCK], result: ItemType.ETERNAL_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND_BLOCK, ItemType.ETERNAL_BRAIN_ROD, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.GOLD_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK], result: ItemType.GOD_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND_BLOCK, ItemType.GOD_BRAIN_ROD, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.GOLD_BLOCK, ItemType.DIAMOND_BLOCK], result: ItemType.OMEGA_BRAIN_ROD, count: 1 },
+    { pattern: [ItemType.DIAMOND_BLOCK, ItemType.OMEGA_BRAIN_ROD, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK, ItemType.DIAMOND_BLOCK], result: ItemType.ULTIMATE_BRAIN_ROD, count: 1 },
 
     // 町の建物
     { pattern: [ItemType.PLANKS, ItemType.PLANKS, ItemType.PLANKS, ItemType.PLANKS, 0, ItemType.PLANKS, ItemType.BRICK, ItemType.BRICK, ItemType.BRICK], result: ItemType.BUILDING_HOUSE, count: 1 },
